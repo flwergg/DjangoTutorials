@@ -65,23 +65,38 @@ class ProductForm(forms.Form):
     name = forms.CharField(required=True)
     price = forms.FloatField(required=True)
 
+    def clean_price(self):
+        price = self.cleaned_data['price']
+        if price <= 0:
+            raise forms.ValidationError("Price must be greater than 0")
+        return price
+
 class ProductCreateView(View):
-    template_name = "products/create.html"
-    
+    template_name = 'products/create.html'
+
     def get(self, request):
         form = ProductForm()
-        viewData = {}
-        viewData["title"] = "Create product"
-        viewData["form"] = form
+        viewData = {
+            "title": "Create product",
+            "form": form,
+            "success": False
+        }
         return render(request, self.template_name, viewData)
-    
+
     def post(self, request):
         form = ProductForm(request.POST)
         if form.is_valid():
-            # store in database
-            return redirect("form")
+            viewData = {
+                "title": "Create product",
+                "form": ProductForm(),  # formulario vacío después de crear
+                "success": True,
+                "product_name": form.cleaned_data['name']
+            }
+            return render(request, self.template_name, viewData)
         else:
-            viewData = {}
-            viewData["title"] = "Create product"
-            viewData["form"] = form
+            viewData = {
+                "title": "Create product",
+                "form": form,
+                "success": False
+            }
             return render(request, self.template_name, viewData)
