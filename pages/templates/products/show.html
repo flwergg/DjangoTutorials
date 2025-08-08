@@ -10,10 +10,13 @@
     </div>
     <div class="col-md-8">
       <div class="card-body">
-        <h5 class="card-title">
-          {{product.name}}
-        </h5>
-        <p class="card-text">{{product.description}}</p>
+        {% if product.price > 100 %}
+            <h5 class="card-title" style="color:red">{{ product.name }}</h5>
+        {% else %}
+            <h5 class="card-title">{{ product.name }}</h5>
+        {% endif %}
+        <p class="card-text">Price: ${{ product.price }}</p>
+        <p class="card-text">{{ product.description }}</p>
       </div>
     </div>
   </div>
